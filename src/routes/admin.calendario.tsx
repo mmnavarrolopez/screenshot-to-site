@@ -86,7 +86,7 @@ function CalendarPage() {
         {day && (
           <aside className="space-y-4">
             <div className="rounded-3xl border border-border bg-card p-5 shadow-soft">
-              <p className="text-sm capitalize text-muted-foreground">{formatLong(day)}</p>
+              <p className="text-sm text-muted-foreground first-letter:uppercase">{formatLong(day)}</p>
               <p className="mt-1 font-display text-3xl">
                 {block ? "Bloqueado" : `${occupancy.get(day) ?? 0} / ${MAX_DOGS}`}
               </p>

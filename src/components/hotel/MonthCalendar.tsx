@@ -58,7 +58,7 @@ export function MonthCalendar({
         >
           <ChevronLeft />
         </Button>
-        <h3 className="font-display text-xl capitalize">{formatMonth(year, month)}</h3>
+        <h3 className="font-display text-xl first-letter:uppercase">{formatMonth(year, month)}</h3>
         <Button variant="ghost" size="icon" onClick={() => shift(1)} aria-label="Mes siguiente">
           <ChevronRight />
         </Button>

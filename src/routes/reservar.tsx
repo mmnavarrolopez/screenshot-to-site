@@ -443,7 +443,7 @@ function DateTile({ label, value }: { label: string; value: ISODate | null }) {
   return (
     <div className="rounded-2xl border border-border bg-card p-4 shadow-soft">
       <p className="text-xs text-muted-foreground">{label}</p>
-      <p className="mt-2 font-display text-lg capitalize">{value ? formatLong(value) : "—"}</p>
+      <p className="mt-2 font-display text-lg first-letter:uppercase">{value ? formatLong(value) : "—"}</p>
     </div>
   );
 }
@@ -537,10 +537,10 @@ function RequestSent({ reservation, onNew }: { reservation: Reservation; onNew: 
           </p>
         )}
         <div className="flex flex-col gap-2 sm:flex-row">
-          <Button variant="outline" size="lg" className="flex-1" onClick={onNew}>
+          <Button variant="outline" size="lg" className="w-full sm:flex-1" onClick={onNew}>
             Nueva solicitud
           </Button>
-          <Button asChild size="lg" className="flex-1">
+          <Button asChild size="lg" className="w-full sm:flex-1">
             <Link to="/">Volver al inicio</Link>
           </Button>
         </div>
