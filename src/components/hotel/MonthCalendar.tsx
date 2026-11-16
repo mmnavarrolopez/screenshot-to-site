@@ -94,7 +94,7 @@ export function MonthCalendar({
               aria-label={`${iso}${info.blocked ? ", bloqueado" : `, ${free} lugares libres`}`}
               aria-pressed={isSelected}
               className={cn(
-                "relative flex aspect-square min-h-11 flex-col items-center justify-center rounded-xl border text-sm transition-all",
+                "relative flex aspect-square min-h-11 flex-col lg:aspect-[4/3] items-center justify-center rounded-xl border text-sm transition-all",
                 "border-transparent bg-day-free",
                 few && "bg-day-few",
                 full && !info.blocked && "bg-day-full text-muted-foreground",
