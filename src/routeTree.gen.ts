@@ -14,7 +14,9 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as CondicionesRouteImport } from './routes/condiciones'
 import { Route as ReservarRouteImport } from './routes/reservar'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminAjustesRouteImport } from './routes/admin.ajustes'
 import { Route as AdminCalendarioRouteImport } from './routes/admin.calendario'
+import { Route as AdminPerrosRouteImport } from './routes/admin.perros'
 import { Route as AdminReservasRouteImport } from './routes/admin.reservas'
 
 const IndexRoute = IndexRouteImport.update({
@@ -42,9 +44,19 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAjustesRoute = AdminAjustesRouteImport.update({
+  id: '/ajustes',
+  path: '/ajustes',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminCalendarioRoute = AdminCalendarioRouteImport.update({
   id: '/calendario',
   path: '/calendario',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPerrosRoute = AdminPerrosRouteImport.update({
+  id: '/perros',
+  path: '/perros',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminReservasRoute = AdminReservasRouteImport.update({
@@ -58,7 +70,9 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/condiciones': typeof CondicionesRoute
   '/reservar': typeof ReservarRoute
+  '/admin/ajustes': typeof AdminAjustesRoute
   '/admin/calendario': typeof AdminCalendarioRoute
+  '/admin/perros': typeof AdminPerrosRoute
   '/admin/reservas': typeof AdminReservasRoute
   '/admin/': typeof AdminIndexRoute
 }
@@ -66,7 +80,9 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/condiciones': typeof CondicionesRoute
   '/reservar': typeof ReservarRoute
+  '/admin/ajustes': typeof AdminAjustesRoute
   '/admin/calendario': typeof AdminCalendarioRoute
+  '/admin/perros': typeof AdminPerrosRoute
   '/admin/reservas': typeof AdminReservasRoute
   '/admin': typeof AdminIndexRoute
 }
@@ -76,7 +92,9 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/condiciones': typeof CondicionesRoute
   '/reservar': typeof ReservarRoute
+  '/admin/ajustes': typeof AdminAjustesRoute
   '/admin/calendario': typeof AdminCalendarioRoute
+  '/admin/perros': typeof AdminPerrosRoute
   '/admin/reservas': typeof AdminReservasRoute
   '/admin/': typeof AdminIndexRoute
 }
@@ -87,7 +105,9 @@ export interface FileRouteTypes {
     | '/admin'
     | '/condiciones'
     | '/reservar'
+    | '/admin/ajustes'
     | '/admin/calendario'
+    | '/admin/perros'
     | '/admin/reservas'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
@@ -95,7 +115,9 @@ export interface FileRouteTypes {
     | '/'
     | '/condiciones'
     | '/reservar'
+    | '/admin/ajustes'
     | '/admin/calendario'
+    | '/admin/perros'
     | '/admin/reservas'
     | '/admin'
   id:
@@ -104,7 +126,9 @@ export interface FileRouteTypes {
     | '/admin'
     | '/condiciones'
     | '/reservar'
+    | '/admin/ajustes'
     | '/admin/calendario'
+    | '/admin/perros'
     | '/admin/reservas'
     | '/admin/'
   fileRoutesById: FileRoutesById
@@ -153,11 +177,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/ajustes': {
+      id: '/admin/ajustes'
+      path: '/ajustes'
+      fullPath: '/admin/ajustes'
+      preLoaderRoute: typeof AdminAjustesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/calendario': {
       id: '/admin/calendario'
       path: '/calendario'
       fullPath: '/admin/calendario'
       preLoaderRoute: typeof AdminCalendarioRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/perros': {
+      id: '/admin/perros'
+      path: '/perros'
+      fullPath: '/admin/perros'
+      preLoaderRoute: typeof AdminPerrosRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/reservas': {
@@ -171,13 +209,17 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminAjustesRoute: typeof AdminAjustesRoute
   AdminCalendarioRoute: typeof AdminCalendarioRoute
+  AdminPerrosRoute: typeof AdminPerrosRoute
   AdminReservasRoute: typeof AdminReservasRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminAjustesRoute: AdminAjustesRoute,
   AdminCalendarioRoute: AdminCalendarioRoute,
+  AdminPerrosRoute: AdminPerrosRoute,
   AdminReservasRoute: AdminReservasRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
