@@ -16,7 +16,7 @@ export function DogAvatar({
 }: {
   dog: Pick<Dog, "name" | "photo">;
   size?: keyof typeof SIZES;
-  className?: string;
+  className?: string | undefined;
 }) {
   return (
     <div

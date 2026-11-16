@@ -23,7 +23,7 @@ export function formatMonth(year: number, month: number): string {
 }
 
 export function formatSpecialDay(mmdd: string): string {
-  const [m, d] = mmdd.split("-").map(Number);
+  const [m = 1, d = 1] = mmdd.split("-").map(Number);
   return format(new Date(2000, m - 1, d), "d 'de' MMMM", { locale: es });
 }
 

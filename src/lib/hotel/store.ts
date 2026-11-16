@@ -154,12 +154,12 @@ const blockedList = (s: HotelState) => s.blockedDates.map((b) => b.date);
 export interface PublicRequestInput {
   ownerName: string;
   phone: string;
-  email?: string;
+  email?: string | undefined;
   checkIn: ISODate;
   checkOut: ISODate;
   checkoutTime: string;
-  notes?: string;
-  dogs: { name: string; breed?: string; photo?: string; notes?: string }[];
+  notes?: string | undefined;
+  dogs: { name: string; breed?: string; photo?: string | undefined; notes?: string }[];
 }
 
 export function submitPublicRequest(input: PublicRequestInput): ActionResult<Reservation> {
@@ -231,12 +231,12 @@ export function demoSignOut() {
 export interface ReservationDraft {
   ownerName: string;
   phone: string;
-  email?: string;
+  email?: string | undefined;
   dogIds: string[];
   checkIn: ISODate;
   checkOut: ISODate;
   checkoutTime: string;
-  notes?: string;
+  notes?: string | undefined;
   total: number;
 }
 
@@ -438,7 +438,7 @@ export function deleteDog(id: string): ActionResult {
 
 /* ---------------------------- Admin: blocked dates --------------------------- */
 
-export function setBlocked(date: ISODate, blocked: boolean, reason?: string): ActionResult {
+export function setBlocked(date: ISODate, blocked: boolean, reason?: string | undefined): ActionResult {
   return run(() => {
     const rest = state.blockedDates.filter((b) => b.date !== date);
     commit({

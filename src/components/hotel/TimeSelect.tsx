@@ -11,7 +11,7 @@ export function TimeSelect({
   value: string;
   onChange: (v: string) => void;
   id?: string;
-  className?: string;
+  className?: string | undefined;
 }) {
   return (
     <select

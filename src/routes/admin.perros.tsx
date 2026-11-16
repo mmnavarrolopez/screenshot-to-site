@@ -112,7 +112,10 @@ function DogDialog({ dog, onClose }: { dog: Dog | "new" | null; onClose: () => v
 
   function save() {
     const result = saveDog({ id: existing?.id, name, breed: breed || undefined, ownerName: ownerName || undefined, notes: notes || undefined, photo });
-    if (!result.ok) return toast.error(result.error);
+    if (!result.ok) {
+      toast.error(result.error);
+      return;
+    }
     toast.success(existing ? "Perro actualizado" : "Perro registrado");
     onClose();
   }
@@ -120,7 +123,10 @@ function DogDialog({ dog, onClose }: { dog: Dog | "new" | null; onClose: () => v
   function remove() {
     if (!existing) return;
     const result = deleteDog(existing.id);
-    if (!result.ok) return toast.error(result.error);
+    if (!result.ok) {
+      toast.error(result.error);
+      return;
+    }
     toast.success("Perro eliminado");
     onClose();
   }

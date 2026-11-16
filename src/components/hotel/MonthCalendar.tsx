@@ -34,9 +34,9 @@ export function MonthCalendar({
   onMonthChange: (year: number, month: number) => void;
   getDay: (iso: ISODate) => DayInfo;
   onSelect?: (iso: ISODate) => void;
-  rangeStart?: ISODate | null;
-  rangeEnd?: ISODate | null;
-  selected?: ISODate | null;
+  rangeStart?: ISODate | null | undefined;
+  rangeEnd?: ISODate | null | undefined;
+  selected?: ISODate | null | undefined;
   variant?: "public" | "admin";
   canGoBack?: boolean;
 }) {

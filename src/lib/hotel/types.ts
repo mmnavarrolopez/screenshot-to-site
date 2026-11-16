@@ -6,10 +6,10 @@ export interface Dog {
   id: string;
   name: string;
   /** Image URL (data URL in demo mode, storage URL once the database is connected). */
-  photo?: string;
-  breed?: string;
-  ownerName?: string;
-  notes?: string;
+  photo?: string | undefined;
+  breed?: string | undefined;
+  ownerName?: string | undefined;
+  notes?: string | undefined;
   createdAt: string;
 }
 
@@ -18,14 +18,14 @@ export interface Payment {
   kind: "deposit" | "balance";
   amount: number;
   date: ISODate;
-  note?: string;
+  note?: string | undefined;
 }
 
 export interface Reservation {
   id: string;
   ownerName: string;
   phone: string;
-  email?: string;
+  email?: string | undefined;
   dogIds: string[];
   checkIn: ISODate;
   checkOut: ISODate;
@@ -34,14 +34,14 @@ export interface Reservation {
   status: ReservationStatus;
   total: number;
   payments: Payment[];
-  notes?: string;
+  notes?: string | undefined;
   source: "public" | "admin";
   createdAt: string;
 }
 
 export interface BlockedDate {
   date: ISODate;
-  reason?: string;
+  reason?: string | undefined;
 }
 
 export interface Settings {

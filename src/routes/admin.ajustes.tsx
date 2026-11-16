@@ -53,7 +53,10 @@ function SettingsPage() {
 
   function save() {
     const mult = Number(multiplier.replace(",", "."));
-    if (!(mult >= 1)) return toast.error("El multiplicador debe ser 1 o mayor.");
+    if (!(mult >= 1)) {
+      toast.error("El multiplicador debe ser 1 o mayor.");
+      return;
+    }
     const result = updateSettings({
       nightlyRate: Number(rate) || 0,
       specialMultiplier: mult,
@@ -63,7 +66,10 @@ function SettingsPage() {
       specialDates,
       conditions: conditions.split("\n").map((c) => c.trim()).filter(Boolean),
     });
-    if (!result.ok) return toast.error(result.error);
+    if (!result.ok) {
+      toast.error(result.error);
+      return;
+    }
     toast.success("Ajustes guardados");
   }
 

@@ -10,10 +10,10 @@ export function PhotoPicker({
   label = "Foto",
   className,
 }: {
-  value?: string;
+  value?: string | undefined;
   onChange: (value: string | undefined) => void;
-  label?: string;
-  className?: string;
+  label?: string | undefined;
+  className?: string | undefined;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);

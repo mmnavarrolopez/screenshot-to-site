@@ -8,7 +8,7 @@ export function toISO(d: Date): ISODate {
 }
 
 export function fromISO(iso: ISODate): Date {
-  const [y, m, d] = iso.split("-").map(Number);
+  const [y = 1970, m = 1, d = 1] = iso.split("-").map(Number);
   return new Date(y, m - 1, d);
 }
 

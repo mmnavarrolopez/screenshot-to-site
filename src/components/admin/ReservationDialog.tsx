@@ -38,8 +38,8 @@ export function ReservationDialog({
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  reservation?: Reservation;
-  defaultCheckIn?: ISODate;
+  reservation?: Reservation | undefined;
+  defaultCheckIn?: ISODate | undefined;
 }) {
   const { dogs, reservations, blockedDates, settings } = useHotel();
   const [draft, setDraft] = useState<ReservationDraft>(() => emptyDraft(defaultCheckIn));
@@ -89,7 +89,10 @@ export function ReservationDialog({
 
   function addNewDog() {
     const result = saveDog({ name: newDogName, photo: newDogPhoto, ownerName: draft.ownerName || undefined });
-    if (!result.ok) return toast.error(result.error);
+    if (!result.ok) {
+      toast.error(result.error);
+      return;
+    }
     set({ dogIds: [...draft.dogIds, result.data.id] });
     setNewDogName("");
     setNewDogPhoto(undefined);
@@ -101,7 +104,10 @@ export function ReservationDialog({
     const result = reservation
       ? updateReservation(reservation.id, payload)
       : createAdminReservation(payload, { confirm, deposit: depositFor(total) });
-    if (!result.ok) return setError(result.error);
+    if (!result.ok) {
+      setError(result.error);
+      return;
+    }
     toast.success(reservation ? "Reserva actualizada" : confirm ? "Reserva confirmada" : "Reserva guardada como pendiente");
     onOpenChange(false);
   }

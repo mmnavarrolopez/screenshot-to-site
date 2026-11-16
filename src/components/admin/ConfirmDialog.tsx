@@ -37,7 +37,10 @@ export function ConfirmDialog({
 
   function confirm() {
     const result = confirmReservation(reservation!.id, Number(amount) || 0);
-    if (!result.ok) return setError(result.error);
+    if (!result.ok) {
+      setError(result.error);
+      return;
+    }
     toast.success("Reserva confirmada");
     onOpenChange(false);
   }

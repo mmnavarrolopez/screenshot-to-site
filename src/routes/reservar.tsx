@@ -54,7 +54,7 @@ interface DogForm {
   key: string;
   name: string;
   breed: string;
-  photo?: string;
+  photo?: string | undefined;
   notes: string;
 }
 
@@ -115,11 +115,26 @@ function ReservePage() {
   function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    if (!checkIn || !checkOut) return setError("Elegí la fecha de ingreso y de salida en el calendario.");
-    if (!ownerName.trim()) return setError("Ingresá tu nombre.");
-    if (phone.trim().length < 6) return setError("Ingresá un teléfono de contacto válido.");
-    if (dogForms.some((d) => !d.name.trim())) return setError("Completá el nombre de cada perro.");
-    if (!accepted) return setError("Para continuar, aceptá las condiciones del servicio.");
+    if (!checkIn || !checkOut) {
+      setError("Elegí la fecha de ingreso y de salida en el calendario.");
+      return;
+    }
+    if (!ownerName.trim()) {
+      setError("Ingresá tu nombre.");
+      return;
+    }
+    if (phone.trim().length < 6) {
+      setError("Ingresá un teléfono de contacto válido.");
+      return;
+    }
+    if (dogForms.some((d) => !d.name.trim())) {
+      setError("Completá el nombre de cada perro.");
+      return;
+    }
+    if (!accepted) {
+      setError("Para continuar, aceptá las condiciones del servicio.");
+      return;
+    }
     const result = submitPublicRequest({
       ownerName,
       phone,

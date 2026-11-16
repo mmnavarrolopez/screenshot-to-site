@@ -43,7 +43,10 @@ export function PaymentsDialog({
 
   function add() {
     const result = addPayment(reservation!.id, { kind, amount: Number(amount) || 0, date });
-    if (!result.ok) return toast.error(result.error);
+    if (!result.ok) {
+      toast.error(result.error);
+      return;
+    }
     toast.success("Pago registrado");
     setAmount("");
   }
