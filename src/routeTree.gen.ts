@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CondicionesRouteImport } from './routes/condiciones'
+import { Route as ReservarRouteImport } from './routes/reservar'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +23,40 @@ const CondicionesRoute = CondicionesRouteImport.update({
   path: '/condiciones',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReservarRoute = ReservarRouteImport.update({
+  id: '/reservar',
+  path: '/reservar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/condiciones': typeof CondicionesRoute
+  '/reservar': typeof ReservarRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/condiciones': typeof CondicionesRoute
+  '/reservar': typeof ReservarRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/condiciones': typeof CondicionesRoute
+  '/reservar': typeof ReservarRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/condiciones'
+  fullPaths: '/' | '/condiciones' | '/reservar'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/condiciones'
-  id: '__root__' | '/' | '/condiciones'
+  to: '/' | '/condiciones' | '/reservar'
+  id: '__root__' | '/' | '/condiciones' | '/reservar'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CondicionesRoute: typeof CondicionesRoute
+  ReservarRoute: typeof ReservarRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +75,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CondicionesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reservar': {
+      id: '/reservar'
+      path: '/reservar'
+      fullPath: '/reservar'
+      preLoaderRoute: typeof ReservarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CondicionesRoute: CondicionesRoute,
+  ReservarRoute: ReservarRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

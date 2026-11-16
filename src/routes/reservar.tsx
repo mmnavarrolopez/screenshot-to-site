@@ -261,6 +261,10 @@ function ReservePage() {
             </div>
           )}
 
+          <div className="lg:hidden">
+            <PaymentInfo settings={settings} deposit={quote?.deposit} />
+          </div>
+
           {/* Request form */}
           <div ref={formRef} className="scroll-mt-20">
             <form onSubmit={submit} className="space-y-6 rounded-3xl border border-border bg-card p-5 shadow-soft sm:p-6">
@@ -405,10 +409,6 @@ function ReservePage() {
         </div>
       </div>
 
-      {/* Payment info on mobile */}
-      <div className="mx-auto -mt-24 max-w-6xl px-4 pb-32 sm:px-6 lg:hidden">
-        <PaymentInfo settings={settings} deposit={quote?.deposit} />
-      </div>
     </PublicLayout>
   );
 }
