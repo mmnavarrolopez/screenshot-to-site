@@ -28,3 +28,12 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Project rules
+
+- Booking rules (capacity, nights, pricing, companions) live only in `src/lib/hotel/rules.ts` as pure functions; UI and future server functions both call them so limits are enforced identically.
+- All data access goes through the action functions in `src/lib/hotel/store.ts` (currently a browser-only demo store); swap their bodies for server functions when the database is connected instead of calling storage from components.
+- Calendar dates are `YYYY-MM-DD` strings handled by `src/lib/hotel/dates.ts`, never `Date` objects in state, to avoid time-zone drift.
+- "Today" is resolved client-side via `useToday()` and money/date formatting is deterministic, so SSR and hydration render the same markup.
+- `/admin` and its children render client-only (`ssr: false`) because they show private data.
+- Planned database schema and access model: `docs/arquitectura-base-de-datos.md`.
