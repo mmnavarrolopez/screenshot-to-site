@@ -12,7 +12,7 @@ import { StatusBadge } from "@/components/hotel/StatusBadge";
 import { setBlocked, useHotel } from "@/lib/hotel/store";
 import { useToday } from "@/lib/hotel/use-today";
 import { fromISO, type ISODate } from "@/lib/hotel/dates";
-import { formatLong } from "@/lib/hotel/format";
+import { formatLong, plural } from "@/lib/hotel/format";
 import { MAX_DOGS, isSpecialDate, occupancyByDate, reservationsOnNight } from "@/lib/hotel/rules";
 
 export const Route = createFileRoute("/admin/calendario")({
@@ -119,7 +119,7 @@ function CalendarPage() {
                   <p className="text-xs text-muted-foreground">Solicitudes pendientes (no ocupan lugar)</p>
                   {pendingToday.map((r) => (
                     <div key={r.id} className="flex items-center justify-between text-sm">
-                      <span>{r.ownerName} · {r.dogIds.length} 🐾</span>
+                      <span>{r.ownerName} · {plural(r.dogIds.length, "perro", "perros")}</span>
                       <StatusBadge status="pending" />
                     </div>
                   ))}

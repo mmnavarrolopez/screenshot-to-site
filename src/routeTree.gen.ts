@@ -13,6 +13,9 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as CondicionesRouteImport } from './routes/condiciones'
 import { Route as ReservarRouteImport } from './routes/reservar'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminCalendarioRouteImport } from './routes/admin.calendario'
+import { Route as AdminReservasRouteImport } from './routes/admin.reservas'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,37 +37,81 @@ const ReservarRoute = ReservarRouteImport.update({
   path: '/reservar',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCalendarioRoute = AdminCalendarioRouteImport.update({
+  id: '/calendario',
+  path: '/calendario',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminReservasRoute = AdminReservasRouteImport.update({
+  id: '/reservas',
+  path: '/reservas',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/condiciones': typeof CondicionesRoute
   '/reservar': typeof ReservarRoute
+  '/admin/calendario': typeof AdminCalendarioRoute
+  '/admin/reservas': typeof AdminReservasRoute
+  '/admin/': typeof AdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
   '/condiciones': typeof CondicionesRoute
   '/reservar': typeof ReservarRoute
+  '/admin/calendario': typeof AdminCalendarioRoute
+  '/admin/reservas': typeof AdminReservasRoute
+  '/admin': typeof AdminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/condiciones': typeof CondicionesRoute
   '/reservar': typeof ReservarRoute
+  '/admin/calendario': typeof AdminCalendarioRoute
+  '/admin/reservas': typeof AdminReservasRoute
+  '/admin/': typeof AdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/condiciones' | '/reservar'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/condiciones'
+    | '/reservar'
+    | '/admin/calendario'
+    | '/admin/reservas'
+    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/condiciones' | '/reservar'
-  id: '__root__' | '/' | '/admin' | '/condiciones' | '/reservar'
+  to:
+    | '/'
+    | '/condiciones'
+    | '/reservar'
+    | '/admin/calendario'
+    | '/admin/reservas'
+    | '/admin'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/condiciones'
+    | '/reservar'
+    | '/admin/calendario'
+    | '/admin/reservas'
+    | '/admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AdminRoute: typeof AdminRoute
+  AdminRoute: typeof AdminRouteWithChildren
   CondicionesRoute: typeof CondicionesRoute
   ReservarRoute: typeof ReservarRoute
 }
@@ -99,12 +146,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReservarRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/calendario': {
+      id: '/admin/calendario'
+      path: '/calendario'
+      fullPath: '/admin/calendario'
+      preLoaderRoute: typeof AdminCalendarioRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/reservas': {
+      id: '/admin/reservas'
+      path: '/reservas'
+      fullPath: '/admin/reservas'
+      preLoaderRoute: typeof AdminReservasRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
+interface AdminRouteChildren {
+  AdminCalendarioRoute: typeof AdminCalendarioRoute
+  AdminReservasRoute: typeof AdminReservasRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminCalendarioRoute: AdminCalendarioRoute,
+  AdminReservasRoute: AdminReservasRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AdminRoute: AdminRoute,
+  AdminRoute: AdminRouteWithChildren,
   CondicionesRoute: CondicionesRoute,
   ReservarRoute: ReservarRoute,
 }
