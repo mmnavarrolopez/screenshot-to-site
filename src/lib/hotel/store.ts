@@ -409,7 +409,7 @@ export function removePayment(reservationId: string, paymentId: string): ActionR
 
 /* -------------------------------- Admin: dogs ------------------------------- */
 
-export function saveDog(dog: Omit<Dog, "id" | "createdAt"> & { id?: string }): ActionResult<Dog> {
+export function saveDog(dog: Omit<Dog, "id" | "createdAt"> & { id?: string | undefined }): ActionResult<Dog> {
   return run(() => {
     if (!dog.name.trim()) return { ok: false, error: "Ingresá el nombre del perro." };
     if (dog.id) {

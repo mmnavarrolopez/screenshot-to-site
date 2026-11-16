@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { formatMoney } from "@/lib/hotel/format";
 import type { Settings } from "@/lib/hotel/types";
 
-export function PaymentInfo({ settings, deposit }: { settings: Settings; deposit?: number }) {
+export function PaymentInfo({ settings, deposit }: { settings: Settings; deposit?: number | undefined }) {
   const [copied, setCopied] = useState(false);
   const hasAlias = settings.bankAlias.trim().length > 0;
 
