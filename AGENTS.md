@@ -37,3 +37,5 @@ use the editor.
 - "Today" is resolved client-side via `useToday()` and money/date formatting is deterministic, so SSR and hydration render the same markup.
 - `/admin` and its children render client-only (`ssr: false`) because they show private data.
 - Planned database schema and access model: `docs/arquitectura-base-de-datos.md`.
+- Backend is the owner's own Supabase project, never Lovable Cloud; its full schema lives in `docs/supabase/esquema.sql` (pasted by the owner in the SQL Editor), so any schema change must be added there as a new script the owner can run.
+- Booking writes and public reads go through SECURITY DEFINER SQL functions that mirror `rules.ts`, so the app needs only the publishable key (no server secret on Cloudflare); when a rule changes, update `rules.ts`, the SQL functions and `docs/supabase/pruebas/reglas.sql` together.

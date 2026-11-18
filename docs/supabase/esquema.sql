@@ -247,7 +247,7 @@ declare
   r public.reservations;
   v_over date;
 begin
-  v_id := case when tg_table_name = 'reservation_dogs' then new.reservation_id else new.id end;
+  v_id := (to_jsonb(new) ->> case when tg_table_name = 'reservation_dogs' then 'reservation_id' else 'id' end)::uuid;
   select * into r from public.reservations where id = v_id;
   if not found or r.status <> 'confirmed' then return null; end if;
   perform public.hotel_lock_capacity();
