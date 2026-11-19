@@ -39,3 +39,15 @@ Todo lo de esta carpeta es para **tu** proyecto de Supabase. Lovable Cloud no se
 - 500 MB de base de datos y 1 GB de fotos (las fotos se achican antes de subirse).
 - El proyecto se **pausa tras 7 días sin actividad**; se reactiva desde el panel de Supabase con
   "Restore". Con clientes reservando normalmente no ocurre.
+
+## Verificar que tu usuario es administrador
+
+Ejecuta en el SQL Editor:
+
+```sql
+select u.email, r.role
+from auth.users u
+join public.user_roles r on r.user_id = u.id;
+```
+
+Debe aparecer una fila con tu correo y `admin`. Si no aparece ninguna fila, ejecuta el `insert` de la sección anterior con tu correo.

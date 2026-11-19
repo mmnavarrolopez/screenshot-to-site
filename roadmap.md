@@ -5,8 +5,9 @@
 - [ ] Etapa 2: crear proyecto propio de Supabase Free y preparar la app para usarlo
   - [x] Script de base de datos con reglas y seguridad, probado (docs/supabase/esquema.sql)
   - [x] Script ejecutado en Supabase del usuario ("Success. No rows returned")
-  - [ ] Usuario: crear usuario admin, desactivar registro público, enviar URL + publishable key — espera al usuario
-  - [ ] Verificar conexión con su proyecto
+  - [x] Usuario: registro público desactivado, URL + publishable key recibidas (proyecto qochzsyyybnynbysfjye)
+  - [x] Conexión verificada: funciones públicas responden, tablas privadas ocultas al público
+  - [ ] Usuario: dar rol admin a su usuario (insert en user_roles) y confirmar con la consulta de verificación — espera al usuario
 - [ ] Etapa 3: migrar datos del navegador a Supabase (perros, fotos, reservas, pagos, fechas bloqueadas, ajustes, acceso admin) — espera Etapa 2
 - [ ] Etapa 4: compilar y configurar Cloudflare (sin publicar) — espera Etapa 3
 - [ ] Etapa 5: publicar — solo cuando el usuario lo autorice
