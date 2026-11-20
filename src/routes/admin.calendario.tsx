@@ -129,13 +129,21 @@ function CalendarPage() {
 
             <div className="rounded-3xl border border-border bg-card p-5 shadow-soft">
               {block ? (
-                <Button variant="outline" className="w-full" onClick={() => { setBlocked(day, false); toast.success("Fecha desbloqueada"); }}>
+                <Button variant="outline" className="w-full" onClick={async () => {
+                  const result = await setBlocked(day, false);
+                  if (result.ok) toast.success("Fecha desbloqueada");
+                  else toast.error(result.error);
+                }}>
                   <Unlock /> Desbloquear fecha
                 </Button>
               ) : (
                 <div className="space-y-2">
                   <Input placeholder="Motivo (opcional)" value={reason} onChange={(e) => setReason(e.target.value)} />
-                  <Button variant="espresso" className="w-full" onClick={() => { setBlocked(day, true, reason); setReason(""); toast.success("Fecha bloqueada"); }}>
+                  <Button variant="espresso" className="w-full" onClick={async () => {
+                    const result = await setBlocked(day, true, reason);
+                    if (result.ok) { setReason(""); toast.success("Fecha bloqueada"); }
+                    else toast.error(result.error);
+                  }}>
                     <Ban /> Bloquear fecha
                   </Button>
                   {confirmedToday.length > 0 && (

@@ -47,6 +47,7 @@ export function ReservationDialog({
   const [newDogName, setNewDogName] = useState("");
   const [newDogPhoto, setNewDogPhoto] = useState<string | undefined>();
   const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -87,23 +88,28 @@ export function ReservationDialog({
     set({ dogIds: draft.dogIds.includes(id) ? draft.dogIds.filter((x) => x !== id) : [...draft.dogIds, id] });
   }
 
-  function addNewDog() {
-    const result = saveDog({ name: newDogName, photo: newDogPhoto, ownerName: draft.ownerName || undefined });
+  async function addNewDog() {
+    setBusy(true);
+    const result = await saveDog({ name: newDogName, photo: newDogPhoto, ownerName: draft.ownerName || undefined });
+    setBusy(false);
     if (!result.ok) {
       toast.error(result.error);
       return;
     }
-    set({ dogIds: [...draft.dogIds, result.data.id] });
+    const newId = result.data.id;
+    setDraft((d) => ({ ...d, dogIds: [...d.dogIds, newId] }));
     setNewDogName("");
     setNewDogPhoto(undefined);
   }
 
-  function save(confirm: boolean) {
+  async function save(confirm: boolean) {
     setError(null);
+    setBusy(true);
     const payload = { ...draft, total };
     const result = reservation
-      ? updateReservation(reservation.id, payload)
-      : createAdminReservation(payload, { confirm, deposit: depositFor(total) });
+      ? await updateReservation(reservation.id, payload)
+      : await createAdminReservation(payload, { confirm, deposit: depositFor(total) });
+    setBusy(false);
     if (!result.ok) {
       setError(result.error);
       return;
@@ -174,7 +180,7 @@ export function ReservationDialog({
           <div className="mt-3 flex items-center gap-3 rounded-xl bg-secondary/60 p-3">
             <PhotoPicker value={newDogPhoto} onChange={setNewDogPhoto} className="size-14" />
             <Input placeholder="Nombre del nuevo perro" value={newDogName} onChange={(e) => setNewDogName(e.target.value)} className="bg-card" />
-            <Button type="button" variant="outline" size="icon" onClick={addNewDog} disabled={!newDogName.trim()} aria-label="Agregar perro">
+            <Button type="button" variant="outline" size="icon" onClick={() => void addNewDog()} disabled={busy || !newDogName.trim()} aria-label="Agregar perro">
               <Plus />
             </Button>
           </div>
@@ -225,13 +231,13 @@ export function ReservationDialog({
 
         <DialogFooter className="gap-2">
           {reservation ? (
-            <Button onClick={() => save(false)}>Guardar cambios</Button>
+            <Button onClick={() => void save(false)} disabled={busy}>Guardar cambios</Button>
           ) : (
             <>
-              <Button variant="outline" onClick={() => save(false)}>
+              <Button variant="outline" onClick={() => void save(false)} disabled={busy}>
                 Guardar como pendiente
               </Button>
-              <Button onClick={() => save(true)} disabled={!availability.ok}>
+              <Button onClick={() => void save(true)} disabled={busy || !availability.ok}>
                 Guardar y confirmar
               </Button>
             </>

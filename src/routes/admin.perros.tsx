@@ -98,6 +98,7 @@ function DogDialog({ dog, onClose }: { dog: Dog | "new" | null; onClose: () => v
   const [ownerName, setOwnerName] = useState("");
   const [notes, setNotes] = useState("");
   const [photo, setPhoto] = useState<string | undefined>();
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     const d = dog && dog !== "new" ? dog : null;
@@ -110,8 +111,10 @@ function DogDialog({ dog, onClose }: { dog: Dog | "new" | null; onClose: () => v
 
   const existing = dog && dog !== "new" ? dog : null;
 
-  function save() {
-    const result = saveDog({ id: existing?.id, name, breed: breed || undefined, ownerName: ownerName || undefined, notes: notes || undefined, photo });
+  async function save() {
+    setBusy(true);
+    const result = await saveDog({ id: existing?.id, name, breed: breed || undefined, ownerName: ownerName || undefined, notes: notes || undefined, photo });
+    setBusy(false);
     if (!result.ok) {
       toast.error(result.error);
       return;
@@ -120,9 +123,11 @@ function DogDialog({ dog, onClose }: { dog: Dog | "new" | null; onClose: () => v
     onClose();
   }
 
-  function remove() {
+  async function remove() {
     if (!existing) return;
-    const result = deleteDog(existing.id);
+    setBusy(true);
+    const result = await deleteDog(existing.id);
+    setBusy(false);
     if (!result.ok) {
       toast.error(result.error);
       return;
@@ -161,11 +166,11 @@ function DogDialog({ dog, onClose }: { dog: Dog | "new" | null; onClose: () => v
         </div>
         <DialogFooter className="gap-2">
           {existing && (
-            <Button variant="ghost" className="text-destructive sm:mr-auto" onClick={remove}>
+            <Button variant="ghost" className="text-destructive sm:mr-auto" onClick={() => void remove()} disabled={busy}>
               <Trash2 /> Eliminar
             </Button>
           )}
-          <Button onClick={save}>Guardar</Button>
+          <Button onClick={() => void save()} disabled={busy}>Guardar</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

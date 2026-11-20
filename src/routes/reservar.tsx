@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { AlertCircle, CheckCircle2, Clock, Info, Plus, Trash2 } from "lucide-react";
+import { AlertCircle, CheckCircle2, Clock, Info, Loader2, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -62,7 +62,7 @@ const newDog = (): DogForm => ({ key: Math.random().toString(36).slice(2), name:
 
 function ReservePage() {
   const today = useToday();
-  const { reservations, dogs, blockedDates, settings } = useHotel();
+  const { reservations, dogs, blockedDates, settings, status } = useHotel();
   const [view, setView] = useState<{ y: number; m: number } | null>(null);
   const [checkIn, setCheckIn] = useState<ISODate | null>(null);
   const [checkOut, setCheckOut] = useState<ISODate | null>(null);
@@ -75,6 +75,7 @@ function ReservePage() {
   const [accepted, setAccepted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState<Reservation | null>(null);
+  const [sending, setSending] = useState(false);
   const formRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -112,7 +113,7 @@ function ReservePage() {
     setDogForms((list) => list.map((d) => (d.key === key ? { ...d, ...patch } : d)));
   }
 
-  function submit(e: React.FormEvent) {
+  async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     if (!checkIn || !checkOut) {
@@ -135,7 +136,8 @@ function ReservePage() {
       setError("Para continuar, aceptá las condiciones del servicio.");
       return;
     }
-    const result = submitPublicRequest({
+    setSending(true);
+    const result = await submitPublicRequest({
       ownerName,
       phone,
       email,
@@ -145,6 +147,7 @@ function ReservePage() {
       checkoutTime,
       dogs: dogForms.map((d) => ({ name: d.name, breed: d.breed, photo: d.photo, notes: d.notes })),
     });
+    setSending(false);
     if (!result.ok) {
       setError(result.error);
       toast.error(result.error);
@@ -185,7 +188,12 @@ function ReservePage() {
         <div className="space-y-6">
           {/* Calendar */}
           <div className="rounded-3xl border border-border bg-card p-4 shadow-soft sm:p-6">
-            {today && view ? (
+            {status === "error" && (
+              <p className="mb-4 flex items-start gap-2 rounded-xl bg-destructive/10 p-3 text-sm text-destructive" role="alert">
+                <AlertCircle className="mt-0.5 size-4 shrink-0" /> No pudimos cargar la disponibilidad. Revisá tu conexión y recargá la página.
+              </p>
+            )}
+            {today && view && status === "ready" ? (
               <MonthCalendar
                 year={view.y}
                 month={view.m}
@@ -374,12 +382,9 @@ function ReservePage() {
                 </p>
               )}
 
-              <Button type="submit" size="xl" className="w-full" disabled={!!availability && !availability.ok}>
-                Enviar solicitud
+              <Button type="submit" size="xl" className="w-full" disabled={sending || status !== "ready" || (!!availability && !availability.ok)}>
+                {sending && <Loader2 className="animate-spin" />} {sending ? "Enviando…" : "Enviar solicitud"}
               </Button>
-              <p className="text-center text-xs text-muted-foreground">
-                Vista de demostración: la solicitud se guarda solo en este navegador.
-              </p>
             </form>
           </div>
         </div>

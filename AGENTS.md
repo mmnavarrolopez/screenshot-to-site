@@ -32,7 +32,7 @@ use the editor.
 ## Project rules
 
 - Booking rules (capacity, nights, pricing, companions) live only in `src/lib/hotel/rules.ts` as pure functions; UI and future server functions both call them so limits are enforced identically.
-- All data access goes through the action functions in `src/lib/hotel/store.ts` (currently a browser-only demo store); swap their bodies for server functions when the database is connected instead of calling storage from components.
+- All data access goes through the async action functions in `src/lib/hotel/store.ts` (browser Supabase client, publishable key only; row conversions in `mapping.ts`); components never call Supabase directly. Public visitors get confirmed stays as personal-data-free reservations so `rules.ts` runs unchanged; `demo-store.ts` is the retired localStorage demo kept only for reference and one-time import.
 - Calendar dates are `YYYY-MM-DD` strings handled by `src/lib/hotel/dates.ts`, never `Date` objects in state, to avoid time-zone drift.
 - "Today" is resolved client-side via `useToday()` and money/date formatting is deterministic, so SSR and hydration render the same markup.
 - `/admin` and its children render client-only (`ssr: false`) because they show private data.

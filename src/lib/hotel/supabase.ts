@@ -9,9 +9,9 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 const DEFAULT_URL = "https://qochzsyyybnynbysfjye.supabase.co";
 const DEFAULT_KEY = "sb_publishable_5d-X5Kojt96HdSkIxDRB0w_pMYrKwtQ";
 
-export const SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL as string | undefined) || DEFAULT_URL;
+export const SUPABASE_URL = (import.meta.env["VITE_SUPABASE_URL"] as string | undefined) || DEFAULT_URL;
 const SUPABASE_KEY =
-  (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined) || DEFAULT_KEY;
+  (import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"] as string | undefined) || DEFAULT_KEY;
 
 export const PHOTO_BUCKET = "dog-photos";
 const PHOTO_PREFIX = `${SUPABASE_URL}/storage/v1/object/public/${PHOTO_BUCKET}/`;

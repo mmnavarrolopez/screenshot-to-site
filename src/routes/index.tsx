@@ -146,8 +146,8 @@ function Home() {
 
 function NextDays() {
   const today = useToday();
-  const { reservations, blockedDates } = useHotel();
-  if (!today) return <div className="h-40" />;
+  const { reservations, blockedDates, status } = useHotel();
+  if (!today || status !== "ready") return <div className="h-40" />;
   const occupancy = occupancyByDate(reservations);
   const blocked = new Set(blockedDates.map((b) => b.date));
   const days = Array.from({ length: 14 }, (_, i) => addDaysISO(today, i));

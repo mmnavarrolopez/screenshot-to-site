@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BrandMark } from "@/components/site/SiteHeader";
-import { demoSignOut, useHotel } from "@/lib/hotel/store";
+import { signOut, useHotel } from "@/lib/hotel/store";
 
 const NAV = [
   { to: "/admin", label: "Panel", icon: LayoutDashboard, exact: true },
@@ -20,21 +20,12 @@ const NAV = [
   { to: "/admin/ajustes", label: "Ajustes", icon: Settings2, exact: false },
 ] as const;
 
-export function DemoNotice() {
-  return (
-    <div className="bg-espresso px-4 py-2 text-center text-xs text-espresso-foreground">
-      Modo demostración · los datos se guardan solo en este navegador hasta conectar la base de datos.
-    </div>
-  );
-}
-
 export function AdminShell({ children }: { children: React.ReactNode }) {
   const { reservations } = useHotel();
   const pending = reservations.filter((r) => r.status === "pending").length;
 
   return (
     <div className="min-h-screen bg-background">
-      <DemoNotice />
       <div className="lg:grid lg:grid-cols-[248px_1fr]">
         <aside className="sticky top-0 hidden h-screen flex-col border-r border-sidebar-border bg-sidebar p-5 lg:flex">
           <Link to="/admin">
@@ -66,7 +57,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                 <ExternalLink /> Ver sitio público
               </Link>
             </Button>
-            <Button variant="ghost" className="w-full justify-start" onClick={demoSignOut}>
+            <Button variant="ghost" className="w-full justify-start" onClick={() => void signOut()}>
               <LogOut /> Salir
             </Button>
           </div>
@@ -83,7 +74,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                   <ExternalLink />
                 </Link>
               </Button>
-              <Button variant="ghost" size="icon" aria-label="Salir" onClick={demoSignOut}>
+              <Button variant="ghost" size="icon" aria-label="Salir" onClick={() => void signOut()}>
                 <LogOut />
               </Button>
             </div>

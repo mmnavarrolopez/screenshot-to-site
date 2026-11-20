@@ -3,8 +3,10 @@
 Base de datos: proyecto **propio** de Supabase (plan gratuito), sin Lovable Cloud.
 El esquema listo para pegar está en `docs/supabase/esquema.sql` (guía en `docs/supabase/LEEME.md`).
 
-Estado actual: modo demostración. Los datos viven en el navegador (`src/lib/hotel/store.ts`)
-y la app arranca vacía. Las reglas de negocio están en `src/lib/hotel/rules.ts` (funciones puras,
+Estado actual: la app lee y guarda todo en el Supabase propio (`src/lib/hotel/store.ts`).
+El acceso de administración usa email + contraseña de Supabase y exige el rol `admin`.
+Los datos de la versión de prueba guardados en un navegador se pueden pasar una vez a la base
+desde Administración → Ajustes (la copia del navegador no se borra). Las reglas de negocio están en `src/lib/hotel/rules.ts` (funciones puras,
 cubiertas por `src/test/hotel-rules.test.ts`) para reutilizarlas en el servidor.
 
 ## Tablas

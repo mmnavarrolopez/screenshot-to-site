@@ -25,6 +25,7 @@ export function ConfirmDialog({
 }) {
   const [amount, setAmount] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     if (reservation) {
@@ -35,8 +36,10 @@ export function ConfirmDialog({
 
   if (!reservation) return null;
 
-  function confirm() {
-    const result = confirmReservation(reservation!.id, Number(amount) || 0);
+  async function confirm() {
+    setBusy(true);
+    const result = await confirmReservation(reservation!.id, Number(amount) || 0);
+    setBusy(false);
     if (!result.ok) {
       setError(result.error);
       return;
@@ -74,7 +77,7 @@ export function ConfirmDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Volver
           </Button>
-          <Button variant="success" onClick={confirm}>
+          <Button variant="success" onClick={() => void confirm()} disabled={busy}>
             Confirmar reserva
           </Button>
         </DialogFooter>

@@ -88,7 +88,11 @@ export function ReservationCard({ reservation }: { reservation: Reservation }) {
             <X /> Cancelar
           </Button>
         ) : (
-          <Button size="sm" variant="ghost" onClick={() => { reopenReservation(r.id); toast.success("Reserva reabierta como pendiente"); }}>
+          <Button size="sm" variant="ghost" onClick={async () => {
+            const result = await reopenReservation(r.id);
+            if (result.ok) toast.success("Reserva reabierta como pendiente");
+            else toast.error(result.error);
+          }}>
             <RotateCcw /> Reabrir
           </Button>
         )}
@@ -109,7 +113,11 @@ export function ReservationCard({ reservation }: { reservation: Reservation }) {
             <AlertDialogCancel>Volver</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              onClick={() => { cancelReservation(r.id); toast.success("Reserva cancelada"); }}
+              onClick={async () => {
+                const result = await cancelReservation(r.id);
+                if (result.ok) toast.success("Reserva cancelada");
+                else toast.error(result.error);
+              }}
             >
               Cancelar reserva
             </AlertDialogAction>

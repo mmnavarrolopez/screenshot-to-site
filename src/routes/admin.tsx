@@ -1,15 +1,15 @@
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { useState } from "react";
-import { Lock } from "lucide-react";
+import { Loader2, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AdminShell, DemoNotice } from "@/components/admin/AdminShell";
+import { AdminShell } from "@/components/admin/AdminShell";
 import { BrandMark } from "@/components/site/SiteHeader";
-import { demoSignIn, useHotel } from "@/lib/hotel/store";
+import { signIn, useHotel } from "@/lib/hotel/store";
 
 export const Route = createFileRoute("/admin")({
-  // Admin data lives in the browser (demo) and later behind sign-in: never server-render it.
+  // Private data behind sign-in (session lives in the browser): never server-render it.
   ssr: false,
   head: () => ({
     meta: [
@@ -26,7 +26,14 @@ export const Route = createFileRoute("/admin")({
 });
 
 function AdminLayout() {
-  const { adminSession } = useHotel();
+  const { adminSession, authReady } = useHotel();
+  if (!authReady) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gradient-warm text-muted-foreground">
+        <Loader2 className="size-6 animate-spin" aria-label="Cargando" />
+      </div>
+    );
+  }
   if (!adminSession) return <AdminLogin />;
   return (
     <AdminShell>
@@ -37,9 +44,25 @@ function AdminLayout() {
 
 function AdminLogin() {
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    if (!email.trim() || !password) {
+      setError("Ingresá tu email y contraseña.");
+      return;
+    }
+    setBusy(true);
+    const result = await signIn(email, password);
+    setBusy(false);
+    if (!result.ok) setError(result.error);
+  }
+
   return (
     <div className="flex min-h-screen flex-col bg-gradient-warm">
-      <DemoNotice />
       <div className="flex flex-1 items-center justify-center px-4 py-12">
         <div className="w-full max-w-sm animate-rise rounded-3xl border border-border bg-card p-6 shadow-lift sm:p-8">
           <BrandMark />
@@ -47,33 +70,28 @@ function AdminLogin() {
             <Lock className="size-4" /> Acceso privado
           </div>
           <h1 className="mt-2 text-3xl">Administración</h1>
-          <form
-            className="mt-6 space-y-4"
-            onSubmit={(e) => {
-              e.preventDefault();
-              demoSignIn();
-            }}
-          >
+          <form className="mt-6 space-y-4" onSubmit={submit}>
             <div>
               <Label htmlFor="admin-email" className="mb-1.5 block">
                 Email
               </Label>
-              <Input id="admin-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="h-11" placeholder="admin@hotelcanino.com" />
+              <Input id="admin-email" type="email" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} className="h-11" />
             </div>
             <div>
               <Label htmlFor="admin-pass" className="mb-1.5 block">
                 Contraseña
               </Label>
-              <Input id="admin-pass" type="password" className="h-11" />
+              <Input id="admin-pass" type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} className="h-11" />
             </div>
-            <Button type="submit" size="xl" className="w-full">
-              Entrar en modo demostración
+            {error && (
+              <p className="rounded-xl bg-destructive/10 p-3 text-sm text-destructive" role="alert">
+                {error}
+              </p>
+            )}
+            <Button type="submit" size="xl" className="w-full" disabled={busy}>
+              {busy && <Loader2 className="animate-spin" />} Entrar
             </Button>
           </form>
-          <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
-            Por ahora no se piden credenciales reales. Al conectar la base de datos, el acceso
-            quedará protegido con cuentas de administrador.
-          </p>
           <Link to="/" className="mt-6 block text-center text-sm text-primary">
             ← Volver al sitio
           </Link>

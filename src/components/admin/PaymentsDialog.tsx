@@ -41,8 +41,8 @@ export function PaymentsDialog({
 
   if (!reservation) return null;
 
-  function add() {
-    const result = addPayment(reservation!.id, { kind, amount: Number(amount) || 0, date });
+  async function add() {
+    const result = await addPayment(reservation!.id, { kind, amount: Number(amount) || 0, date });
     if (!result.ok) {
       toast.error(result.error);
       return;
@@ -77,7 +77,10 @@ export function PaymentsDialog({
               </div>
               <div className="flex items-center gap-2">
                 <span className="font-medium">{formatMoney(p.amount)}</span>
-                <Button variant="ghost" size="icon" aria-label="Eliminar pago" onClick={() => removePayment(reservation.id, p.id)}>
+                <Button variant="ghost" size="icon" aria-label="Eliminar pago" onClick={async () => {
+                    const result = await removePayment(reservation.id, p.id);
+                    if (!result.ok) toast.error(result.error);
+                  }}>
                   <Trash2 />
                 </Button>
               </div>
@@ -104,7 +107,7 @@ export function PaymentsDialog({
               <Input id="p-date" type="date" value={date} onChange={(e) => setDate(e.target.value)} className="bg-card" />
             </div>
           </div>
-          <Button className="w-full" onClick={add}>
+          <Button className="w-full" onClick={() => void add()}>
             Agregar pago
           </Button>
         </div>

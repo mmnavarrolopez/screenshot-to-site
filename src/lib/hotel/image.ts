@@ -1,4 +1,4 @@
-/** Shrinks a photo in the browser so it can be stored in demo mode. */
+/** Shrinks a photo in the browser before uploading it (keeps storage well under the free limit). */
 export async function resizeImage(file: File, maxSize = 640, quality = 0.82): Promise<string> {
   const url = URL.createObjectURL(file);
   try {

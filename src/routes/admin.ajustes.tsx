@@ -18,7 +18,9 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { PageTitle } from "@/components/admin/AdminShell";
-import { resetDemoData, updateSettings, useHotel } from "@/lib/hotel/store";
+import { importLegacyData, updateSettings, useHotel } from "@/lib/hotel/store";
+import { legacySummary, type LegacySummary } from "@/lib/hotel/legacy-import";
+import { plural } from "@/lib/hotel/format";
 import { formatMoney, formatSpecialDay } from "@/lib/hotel/format";
 import { CHECKOUT_LIMIT, DEPOSIT_RATE, MAX_DOGS } from "@/lib/hotel/rules";
 
@@ -51,13 +53,16 @@ function SettingsPage() {
     setSpecialDates(settings.specialDates);
   }, [settings]);
 
-  function save() {
+  const [saving, setSaving] = useState(false);
+
+  async function save() {
     const mult = Number(multiplier.replace(",", "."));
     if (!(mult >= 1)) {
       toast.error("El multiplicador debe ser 1 o mayor.");
       return;
     }
-    const result = updateSettings({
+    setSaving(true);
+    const result = await updateSettings({
       nightlyRate: Number(rate) || 0,
       specialMultiplier: mult,
       bankAlias: alias.trim(),
@@ -66,6 +71,7 @@ function SettingsPage() {
       specialDates,
       conditions: conditions.split("\n").map((c) => c.trim()).filter(Boolean),
     });
+    setSaving(false);
     if (!result.ok) {
       toast.error(result.error);
       return;
@@ -151,25 +157,12 @@ function SettingsPage() {
           </ul>
         </Card>
 
-        <div className="sticky bottom-20 z-10 flex flex-col-reverse gap-3 sm:flex-row sm:justify-between lg:bottom-4">
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant="ghost" className="text-destructive">Borrar datos de demostración</Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent className="rounded-3xl">
-              <AlertDialogHeader>
-                <AlertDialogTitle className="font-display text-2xl font-normal">¿Borrar todo?</AlertDialogTitle>
-                <AlertDialogDescription>Se eliminan reservas, perros, bloqueos y ajustes guardados en este navegador.</AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Volver</AlertDialogCancel>
-                <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={() => { resetDemoData(); toast.success("Datos borrados"); }}>
-                  Borrar
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-          <Button size="xl" className="shadow-lift" onClick={save}>Guardar ajustes</Button>
+        <LegacyImportCard />
+
+        <div className="sticky bottom-20 z-10 flex justify-end lg:bottom-4">
+          <Button size="xl" className="shadow-lift" onClick={() => void save()} disabled={saving}>
+            {saving ? "Guardando…" : "Guardar ajustes"}
+          </Button>
         </div>
       </div>
     </>
@@ -182,5 +175,76 @@ function Card({ title, children }: { title: string; children: React.ReactNode })
       <h2 className="mb-4 text-xl">{title}</h2>
       {children}
     </section>
+  );
+}
+
+/** Offers to move data saved by the old browser-only demo into the database (once). */
+function LegacyImportCard() {
+  const [summary, setSummary] = useState<LegacySummary | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => setSummary(legacySummary()), []);
+  if (!summary) return null;
+
+  async function runImport() {
+    setBusy(true);
+    const result = await importLegacyData();
+    setBusy(false);
+    setSummary(legacySummary());
+    if (!result.ok) {
+      toast.error(result.error);
+      return;
+    }
+    const r = result.data;
+    toast.success(
+      `Listo: ${plural(r.dogs, "perro", "perros")}, ${plural(r.reservations, "reserva", "reservas")} y ${plural(r.payments, "pago", "pagos")} pasados a la base de datos.`,
+    );
+    r.warnings.forEach((w) => toast.warning(w, { duration: 10000 }));
+  }
+
+  const items = [
+    plural(summary.dogs, "perro", "perros"),
+    plural(summary.reservations, "reserva", "reservas"),
+    plural(summary.payments, "pago", "pagos"),
+    plural(summary.blockedDates, "fecha bloqueada", "fechas bloqueadas"),
+  ].join(" · ");
+
+  return (
+    <Card title="Datos de la versión de prueba">
+      <p className="text-sm text-muted-foreground">
+        Este navegador tiene datos cargados antes de conectar la base de datos: <strong className="text-foreground">{items}</strong>.
+      </p>
+      {summary.importedAt ? (
+        <p className="mt-3 rounded-xl bg-success-soft p-3 text-sm text-success">
+          Ya se pasaron a la base de datos el {summary.importedAt.slice(8, 10)}/{summary.importedAt.slice(5, 7)}/{summary.importedAt.slice(0, 4)}. La copia de este navegador se conserva.
+        </p>
+      ) : (
+        <>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Si eran datos reales, podés pasarlos a la base de datos. Si eran pruebas, no hace falta: simplemente ignorá este aviso.
+            La copia de este navegador no se borra.
+          </p>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="outline" className="mt-4" disabled={busy}>
+                {busy ? "Pasando datos…" : "Pasar a la base de datos"}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent className="rounded-3xl">
+              <AlertDialogHeader>
+                <AlertDialogTitle className="font-display text-2xl font-normal">¿Pasar estos datos?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Se copiarán {items} a la base de datos. Las reservas confirmadas se vuelven a verificar con el límite de 6 perros; si alguna no entra, queda pendiente y te avisamos.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Volver</AlertDialogCancel>
+                <AlertDialogAction onClick={() => void runImport()}>Pasar datos</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </>
+      )}
+    </Card>
   );
 }
